@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 
 import { Post } from "../components/Post";
-import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useParams } from "react-router-dom";
 import axios from "../axios";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { AddComment } from "../components/AddComment/index";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchComments } from "../store/actions/commentsActins";
 
 export const FullPost = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
   const [post, setPost] = useState();
-  const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log(comments);
+  const { comments } = useSelector((state) => state.comments);
 
   const fetchPost = async () => {
     try {
@@ -26,33 +27,9 @@ export const FullPost = () => {
     }
   };
 
-  const fetchComments = async () => {
-    try {
-      const { data } = await axios.get(`/comments/${id}`);
-
-      const commentsInfo = data.map((item) => {
-        const user = {
-          fullName: item.owner.fullName,
-          avatarUrl: item.owner.avatarUrl,
-        };
-
-        const result = {
-          text: item.text,
-          user,
-        };
-
-        return result;
-      });
-
-      setComments(commentsInfo);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
     fetchPost();
-    fetchComments();
+    dispatch(fetchComments(id));
   }, []);
 
   if (isLoading) {
@@ -75,7 +52,7 @@ export const FullPost = () => {
         <ReactMarkdown children={post.text} />
       </Post>
       <CommentsBlock items={comments} isLoading={false}>
-        <Index />
+        <AddComment postId={id} />
       </CommentsBlock>
     </>
   );
