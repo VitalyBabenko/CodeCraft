@@ -6,35 +6,30 @@ import SimpleMDE from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { useSelector } from "react-redux";
-import { isAuthSelector } from "../../store/reducers/auth";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "../../axios";
+import { API_URL } from "../../axios";
+import { isAuthSelector } from "../../store/selectors/authSelectors";
+import { uploadImage } from "../../store/actions/uploadAcion";
+import { setImageUrl } from "../../store/reducers/upload";
 
 export const AddPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuth = useSelector(isAuthSelector);
-  const [isLoading, setIsLoading] = useState(false);
-  const [text, setText] = useState("");
+  const { imageUrl } = useSelector((state) => state.upload);
   const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
   const [tags, setTags] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const inputFileRef = useRef(null);
 
   const isEditing = Boolean(id);
 
   const handleChangeFile = async (event) => {
-    try {
-      const formData = new FormData();
-      const file = event.target.files[0];
-      formData.append("image", file);
-      const { data } = await axios.post("/upload", formData);
-      setImageUrl(data.url);
-    } catch (err) {
-      console.warn(err);
-      alert("image didn't upload");
-    }
+    const file = event.target.files[0];
+    dispatch(uploadImage(file));
   };
 
   const onClickRemoveImage = () => {
@@ -46,14 +41,15 @@ export const AddPost = () => {
   }, []);
 
   const onSubmit = async () => {
+    if (text.length < 10) return alert("text must be 10+ letters");
+
+    const fields = {
+      title,
+      imageUrl,
+      tags,
+      text,
+    };
     try {
-      setIsLoading(true);
-      const fields = {
-        title,
-        imageUrl,
-        tags,
-        text,
-      };
       const { data } = isEditing
         ? await axios.patch(`/posts/${id}`, fields)
         : await axios.post("/posts", fields);
@@ -61,7 +57,6 @@ export const AddPost = () => {
       const _id = isEditing ? id : data._id;
 
       navigate(`/posts/${_id}`);
-      setIsLoading(false);
     } catch (err) {
       console.warn(err);
       alert("post setup error");
@@ -76,10 +71,15 @@ export const AddPost = () => {
           setTitle(data.title);
           setTags(data.tags.join(","));
           setText(data.text);
-          setImageUrl(data.imageUrl);
+
+          dispatch(setImageUrl(data.imageUrl));
         })
         .catch((err) => console.warn("error getting post"));
     }
+
+    return () => {
+      dispatch(setImageUrl(""));
+    };
   }, []);
 
   const options = useMemo(
@@ -129,7 +129,7 @@ export const AddPost = () => {
           </Button>
           <img
             className={styles.image}
-            src={`http://localhost:4444${imageUrl}`}
+            src={`${API_URL}${imageUrl}`}
             alt="Uploaded"
           />
         </>

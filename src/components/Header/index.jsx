@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import styles from "./Header.module.scss";
 import Container from "@mui/material/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { isAuthSelector, logout } from "../../store/reducers/auth";
+import { isAuthSelector } from "../../store/selectors/authSelectors";
+import { logout } from "../../store/reducers/auth";
 
 export const Header = () => {
   const dispatch = useDispatch();
@@ -29,23 +30,23 @@ export const Header = () => {
             {isAuth ? (
               <>
                 <Link to="/add-post">
-                  <Button variant="contained">Написать статью</Button>
+                  <Button variant="contained">Create post</Button>
                 </Link>
                 <Button
                   onClick={onClickLogout}
                   variant="contained"
                   color="error"
                 >
-                  Выйти
+                  Log out
                 </Button>
               </>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="outlined">Войти</Button>
+                  <Button variant="outlined">Log in</Button>
                 </Link>
                 <Link to="/register">
-                  <Button variant="contained">Создать аккаунт</Button>
+                  <Button variant="contained">Sign up</Button>
                 </Link>
               </>
             )}

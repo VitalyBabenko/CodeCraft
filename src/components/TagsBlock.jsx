@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,15 +10,27 @@ import Skeleton from "@mui/material/Skeleton";
 
 import { SideBlock } from "./SideBlock";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTags } from "../store/actions/postsActions";
 
-export const TagsBlock = ({ items, isLoading = true }) => {
+export const TagsBlock = () => {
+  const dispatch = useDispatch();
+  const { tags } = useSelector((state) => state.posts);
+
+  const isTagsLoading = tags.status === "loading";
+  const tagsSkeletons = [...Array(5)];
+
+  useEffect(() => {
+    dispatch(fetchTags());
+  }, []);
+
   return (
-    <SideBlock title="Тэги">
+    <SideBlock title="Popular tags">
       <List>
-        {(isLoading ? [...Array(5)] : items).map((name, i) => (
+        {(isTagsLoading ? tagsSkeletons : tags.items).map((name, i) => (
           <Link
             style={{ textDecoration: "none", color: "black" }}
-            to={`/tags/${name}`}
+            to={`/tag/${name}`}
             key={i}
           >
             <ListItem key={i} disablePadding>
@@ -26,7 +38,7 @@ export const TagsBlock = ({ items, isLoading = true }) => {
                 <ListItemIcon>
                   <TagIcon />
                 </ListItemIcon>
-                {isLoading ? (
+                {isTagsLoading ? (
                   <Skeleton width={100} />
                 ) : (
                   <ListItemText primary={name} />

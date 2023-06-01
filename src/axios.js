@@ -1,7 +1,9 @@
 import axios from "axios";
 
+export const API_URL = "http://localhost:4444";
+
 const instance = axios.create({
-  baseURL: "https://code-craft-backend-icumeryge-vitalybabenko.vercel.app",
+  baseURL: API_URL,
 });
 
 instance.interceptors.request.use((config) => {

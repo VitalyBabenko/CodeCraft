@@ -11,7 +11,8 @@ import styles from "./Post.module.scss";
 import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
 import { useDispatch } from "react-redux";
-import { fetchRemovePost } from "../../store/reducers/posts";
+import { fetchRemovePost } from "../../store/actions/postsActions";
+import { API_URL } from "../../axios";
 
 export const Post = (props) => {
   const {
@@ -57,7 +58,7 @@ export const Post = (props) => {
       {imageUrl && (
         <img
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-          src={`https://code-craft-backend-icumeryge-vitalybabenko.vercel.app${imageUrl}`}
+          src={`${API_URL}${imageUrl}`}
           alt={title}
         />
       )}

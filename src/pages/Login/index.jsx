@@ -8,7 +8,8 @@ import { Navigate } from "react-router-dom";
 
 import styles from "./Login.module.scss";
 
-import { fetchAuth, isAuthSelector } from "../../store/reducers/auth";
+import { fetchLogin } from "../../store/actions/authActions";
+import { isAuthSelector } from "../../store/selectors/authSelectors";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export const Login = () => {
   });
 
   const onSubmit = async (values) => {
-    const data = await dispatch(fetchAuth(values));
+    const data = await dispatch(fetchLogin(values));
 
     if (!data.payload) {
       alert("Failed to login");

@@ -8,7 +8,8 @@ import Avatar from "@mui/material/Avatar";
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { fetchRegister, isAuthSelector } from "../../store/reducers/auth";
+import { fetchRegister } from "../../store/actions/authActions";
+import { isAuthSelector } from "../../store/selectors/authSelectors";
 import { Navigate } from "react-router-dom";
 
 export const Registration = () => {

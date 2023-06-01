@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -6,36 +6,38 @@ import Grid from "@mui/material/Grid";
 
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
-import { fetchPosts, fetchTags } from "../store/reducers/posts";
+import { fetchPosts } from "../store/actions/postsActions";
 import { Posts } from "../components/Posts";
 
 export const Home = () => {
   const dispatch = useDispatch();
-  const { posts, tags } = useSelector((state) => state.posts);
-  const userData = useSelector((state) => state.auth);
-
-  const isPostsLoading = posts.status === "loading";
-  const isTagsLoading = tags.status === "loading";
+  // 0 = New posts first;
+  // 1 = Popular posts first
+  const [sort, setSort] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchPosts());
-    dispatch(fetchTags());
-  }, []);
+    const sortParams = {
+      sortBy: sort === 0 ? "createdAt" : "viewsCount",
+      orderBy: "desc",
+    };
+
+    dispatch(fetchPosts(sortParams));
+  }, [sort]);
 
   return (
     <>
       <Tabs
         style={{ marginBottom: 15 }}
-        value={0}
+        value={sort}
         aria-label="basic tabs example"
       >
-        <Tab label="New" />
-        <Tab label="Popular" />
+        <Tab label="New" onClick={() => setSort(0)} />
+        <Tab label="Popular" onClick={() => setSort(1)} />
       </Tabs>
       <Grid container spacing={4}>
-        <Posts posts={posts} isLoading={isPostsLoading} />
+        <Posts />
         <Grid xs={4} item>
-          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+          <TagsBlock />
           <CommentsBlock
             items={[
               {
