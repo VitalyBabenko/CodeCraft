@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchAuthMe } from "./store/actions/authActions";
 import { PostsByTag } from "./pages/PostsByTag/PostsByTag";
+import { Profile } from "./pages/Profile/Profile";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function App() {
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Container>
     </>

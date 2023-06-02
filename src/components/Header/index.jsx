@@ -30,7 +30,10 @@ export const Header = () => {
             {isAuth ? (
               <>
                 <Link to="/add-post">
-                  <Button variant="contained">Create post</Button>
+                  <Button variant="outlined">Create post</Button>
+                </Link>
+                <Link to="/profile">
+                  <Button variant="contained">Profile</Button>
                 </Link>
                 <Button
                   onClick={onClickLogout}

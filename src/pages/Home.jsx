@@ -11,13 +11,16 @@ import { Posts } from "../components/Posts";
 
 export const Home = () => {
   const dispatch = useDispatch();
-  // 0 = New posts first;
-  // 1 = Popular posts first
   const [sort, setSort] = useState(0);
 
   useEffect(() => {
+    let sortBy = "";
+    if (sort === 0) sortBy = "createdAt";
+    if (sort === 1) sortBy = "viewsCount";
+    if (sort === 2) sortBy = "commentsCount";
+
     const sortParams = {
-      sortBy: sort === 0 ? "createdAt" : "viewsCount",
+      sortBy,
       orderBy: "desc",
     };
 
@@ -33,6 +36,7 @@ export const Home = () => {
       >
         <Tab label="New" onClick={() => setSort(0)} />
         <Tab label="Popular" onClick={() => setSort(1)} />
+        <Tab label="Discussed" onClick={() => setSort(2)} />
       </Tabs>
       <Grid container spacing={4}>
         <Posts />
